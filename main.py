@@ -3,7 +3,7 @@ import re
 import time
 import telebot
 import requests
-from config import TOKEN, headers, orderer
+from config import TOKEN, headers, orderer, my_chat_id
 
 bot = telebot.TeleBot(token=TOKEN)
 
@@ -40,7 +40,7 @@ def parse(number_game):
             color_for_mess = color(float(coef))
             result_message = color_for_mess[0] + ' K=' + coef.replace('.', '_') + ' ' + time_for_mess
             result_message += f'\n#{color_for_mess[1]} #K{coef.replace(".", "_")} #T{time_for_mess[:time_for_mess.find(" ")].replace(":", "")} #D{time_for_mess[time_for_mess.find(" ") + 1:].replace(".", "_")}'
-            bot.send_message(chat_id=orderer, text=result_message, disable_notification=True)
+            bot.send_message(chat_id=my_chat_id, text=result_message, disable_notification=True)
             with open('1.txt', 'w') as f:
                 f.write(str(number_game))
         time.sleep(3)
