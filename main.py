@@ -3,17 +3,27 @@ import re
 import time
 import telebot
 import requests
-from config import TOKEN, headers, orderer, my_chat_id
+from config import TOKEN, headers, orderer
 
 bot = telebot.TeleBot(token=TOKEN)
 
 
-# @bot.message_handler(commands=['start', ])
-# def check_id(message):
-#     print(message)
+@bot.message_handler(commands=['start', ])
+def check_id(message):
+    """
+        Для того, чтоб узнать chat_id
+    :param message:
+    :return:
+    """
+    print(message)
 
 
 def color(coef):
+    """
+        Какой кружок и букву выводим
+    :param coef: сам коэфициент
+    :return: котреж, первое это сам кружочек, второе, это буква
+    """
     if 1 <= coef < 1.2:
         return '🔴', 'R'
     elif 1.2 <= coef < 2:
@@ -23,12 +33,17 @@ def color(coef):
     elif 3 <= coef < 5:
         return '🟣', 'P'
     elif 5 <= coef < 10:
-        return '🔵', 'B'
+        return '🟠', 'O'
     else:
         return '🟡', 'Y'
 
 
 def parse(number_game):
+    """
+        Бесконечный цикл на проверку новых данных, с проверкой интернета, чтоб не было краша
+    :param number_game:
+    :return:
+    """
     while True:
         try:
             result = requests.get(f'https://api.cs.fail/crash/get-game/{number_game}', headers=headers).text
