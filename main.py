@@ -41,6 +41,7 @@ def parse(number_game):
             result_message = color_for_mess[0] + ' K=' + coef.replace('.', '_') + ' ' + time_for_mess
             result_message += f'\n#{color_for_mess[1]} #K{coef.replace(".", "_")} #T{time_for_mess[:time_for_mess.find(" ")].replace(":", "")} #D{time_for_mess[time_for_mess.find(" ") + 1:].replace(".", "_")}'
             bot.send_message(chat_id=orderer, text=result_message, disable_notification=True)
+            print(number_game)
             with open('1.txt', 'w') as f:
                 f.write(str(number_game))
         time.sleep(3)
