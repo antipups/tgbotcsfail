@@ -14,15 +14,15 @@ bot = telebot.TeleBot(token=TOKEN)
 
 
 def color(coef):
-    if 1 <= coef <= 1.2:
+    if 1 <= coef < 1.2:
         return '🔴', 'R'
-    elif 1.2 < coef <= 2:
+    elif 1.2 <= coef < 2:
         return '🔵', 'B'
-    elif 2 < coef <= 3:
+    elif 2 <= coef < 3:
         return '🟢', 'G'
-    elif 3 < coef <= 4.5:
+    elif 3 <= coef < 5:
         return '🟣', 'P'
-    elif 4.5 < coef <= 10:
+    elif 5 <= coef < 10:
         return '🔵', 'B'
     else:
         return '🟡', 'Y'
@@ -30,18 +30,21 @@ def color(coef):
 
 def parse(number_game):
     while True:
-        result = requests.get(f'https://api.cs.fail/crash/get-game/{number_game}', headers=headers).text
+        try:
+            result = requests.get(f'https://api.cs.fail/crash/get-game/{number_game}', headers=headers).text
+        except:
+            time.sleep(5)
+            continue
         if result != '{"error_code":-1,"error_text":"Game not found"}':
             number_game += 1
-            coef = re.search(r'crashed_at":\d{0,10}(\.\d{0,2})?', result).group()[12:]
+            coef = round(float(re.search(r'crashed_at":\d{0,10}(\.[^,]*)?', result).group()[12:]), 2)
             time_for_mess = re.search(r'start_at":\d{0,20}', result).group()[10:]
             time_for_mess = time_for_mess[:-3] + '.' + time_for_mess[-3:]
             time_for_mess = (datetime.datetime.fromtimestamp(float(time_for_mess)) + datetime.timedelta(hours=3)).strftime('%H:%M %d.%m.%Y')
-            color_for_mess = color(float(coef))
-            result_message = color_for_mess[0] + ' K=' + coef.replace('.', '_') + ' ' + time_for_mess
-            result_message += f'\n#{color_for_mess[1]} #K{coef.replace(".", "_")} #T{time_for_mess[:time_for_mess.find(" ")].replace(":", "")} #D{time_for_mess[time_for_mess.find(" ") + 1:].replace(".", "_")}'
+            color_for_mess = color(coef)
+            result_message = color_for_mess[0] + ' K=' + str(coef).replace('.', '_') + ' ' + time_for_mess
+            result_message += f'\n#{color_for_mess[1]} #K{str(coef).replace(".", "_")} #T{time_for_mess[:time_for_mess.find(" ")].replace(":", "")} #D{time_for_mess[time_for_mess.find(" ") + 1:].replace(".", "_")}'
             bot.send_message(chat_id=my_chat_id, text=result_message, disable_notification=True)
-            print(number_game)
             with open('1.txt', 'w') as f:
                 f.write(str(number_game))
         time.sleep(3)
